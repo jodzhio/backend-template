@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     redis_host: str
     redis_port: int
 
-    model_config = SettingsConfigDict(env_file=".env.example")
+    model_config = SettingsConfigDict(env_file=".env")
     @property
     def DB_URL(self) -> str:
         return f"postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_base}"

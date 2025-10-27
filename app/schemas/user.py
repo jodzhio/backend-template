@@ -1,34 +1,41 @@
-from pydantic import BaseModel, EmailStr, Field
-from pydantic import ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional, Annotated
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class UserBase(BaseModel):
-    email: EmailStr
-    username: Annotated[str, Field(min_length=3, max_length=50)]
-
-    created_at: datetime = Field(
-            default_factory=lambda: datetime.now(timezone.utc)
-        )
+    email: EmailStr = Field(...)
+    username: Annotated[str, Field(min_length=3, max_length=50)] = Field(...)
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class UserCreate(UserBase):
-    password: str
-    confirm_password: str
+    password: Annotated[str, Field(min_length=8, max_length=128)] = Field(...)
 
 
 class UserResponse(UserBase):
-    id: int
-    is_active: bool
+    id: int = Field(...)
+    is_active: bool = Field(...)
+    created_at: datetime = Field(...)
+    updated_at: datetime = Field(...)
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
-    username: Optional[Annotated[str, Field(min_length=3, max_length=50)]] = None
+    email: Optional[EmailStr] = Field(None)
+    username: Optional[Annotated[str, Field(min_length=3, max_length=50)]] = Field(None)
+    is_active: Optional[bool] = Field(None)
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserPasswordUpdate(BaseModel):
+    current_password: str = Field(...)
+    new_password: Annotated[str, Field(min_length=8, max_length=128)] = Field(...)
+
+
+class UserLogin(BaseModel):
+    email: EmailStr = Field(...)
+    password: str = Field(...)
